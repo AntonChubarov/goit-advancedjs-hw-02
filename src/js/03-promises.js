@@ -1,14 +1,15 @@
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
 function createPromise(position, delay) {
+  const promiseData = { position: position, delay: delay };
   const shouldResolve = Math.random() > 0.3;
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (shouldResolve) {
-        resolve(`Promise ${position} resolved after ${delay} ms`);
+        resolve(promiseData);
       } else {
-        reject(`Promise ${position} rejected after ${delay} ms`);
+        reject(promiseData);
       }
     }, delay);
   });
@@ -24,14 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const step = parseInt(form.elements.step.value, 10);
     const amount = parseInt(form.elements.amount.value, 10);
 
+    form.elements.delay.value = '';
+    form.elements.step.value = '';
+    form.elements.amount.value = '';
+
     for (let i = 0; i < amount; i++) {
       const currentDelay = delay + i * step;
       createPromise(i + 1, currentDelay)
-        .then(message => {
-          iziToast.success({ title: 'Success', message: message });
+        .then(data => {
+          iziToast.success({ title: 'Success', message: `Promise ${data.position} resolved after ${data.delay} ms` });
         })
-        .catch(message => {
-          iziToast.error({ title: 'Error', message: message });
+        .catch(data => {
+          iziToast.error({ title: 'Error', message: `Promise ${data.position} rejected after ${data.delay} ms` });
         });
     }
   });
